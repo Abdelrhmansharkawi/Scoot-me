@@ -3,6 +3,12 @@ const connectDB = require('./config/database');
 const mongoose = require('mongoose');
 const cors = require("cors");
 
+// Define allowed origins
+const allowedOrigins = [
+  'https://scoot-me-j98i.vercel.app',  // Your frontend URL
+  'http://localhost:3000',  // Local development URL (if needed)
+];
+
 // Import models
 const User = require('./models/User');
 const Scooter = require('./models/scooter');
@@ -20,7 +26,19 @@ const resetRoutes = require('./routes/passReset');
 const app = express();
 
 // Allow requests from your frontend origin
-app.use(cors());
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 
 
 // Middleware
