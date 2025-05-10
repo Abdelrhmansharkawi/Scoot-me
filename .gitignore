@@ -1,4 +1,70 @@
-node_modules
-.env
+# Node.js for backend
+/back/node_modules/
+/back/npm-debug.log
+/back/yarn-error.log
+
+# Backend build directories
+/back/dist/
+/back/build/
+/back/coverage/
+
+# Backend logs
+/back/logs/
+back/*.log
+back/*.log.*
+
+# Backend environment files
+/back/.env
+/back/.env.local
+/back/.env.*.local
+
+# Frontend (React, Angular, Vue, etc.) build files
+/front/build/
+/front/dist/
+
+# Frontend node_modules
+/front/node_modules/
+/front/npm-debug.log
+/front/yarn-error.log
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS-specific files
 .DS_Store
-npm-debug.log
+Thumbs.db
+
+# Docker files
+.docker/
+
+# Temporary files
+*.swp
+*.swo
+*.tmp
+
+# Yarn cache
+.yarn/
+
+# npm package lock files
+package-lock.json
+
+# Typescript build files
+*.tsbuildinfo
+
+# Serverless files
+.serverless/
+
+# MacOS Finder files
+*.DS_Store
+
+# VS Code settings
+.vscode/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
