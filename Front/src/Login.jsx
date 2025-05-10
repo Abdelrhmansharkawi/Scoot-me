@@ -5,7 +5,7 @@ import mu from "../public/mu.svg";
 import scan from "../public/scan.svg";
 import axios from "axios";
 
-const API_URL = "https://scoot-me-pi.vercel.app/";
+const API_URL = "https://scoot-me-pi.vercel.app";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);

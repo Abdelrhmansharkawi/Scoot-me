@@ -7,7 +7,7 @@ import axios from "axios";
 import { motion } from "framer-motion";
 
 
-const API_URL = "https://scoot-me-pi.vercel.app/";
+const API_URL = "https://scoot-me-pi.vercel.app";
 
 function History() {
   const [query, setQuery] = useState("");
