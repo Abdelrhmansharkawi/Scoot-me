@@ -5,7 +5,7 @@ const cors = require("cors");
 
 // Define allowed origins
 const allowedOrigins = [
-  'https://scoot-me-1-git-main-abdelrhman-al-sharkawis-projects.vercel.app',  // Your frontend URL
+  'https://scoot-me-j98i.vercel.app',  // Your frontend URL
   'http://localhost:3000',  // Local development URL (if needed)
 ];
 
