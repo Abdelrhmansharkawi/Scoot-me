@@ -36,10 +36,14 @@ const corsOptions = {
     },
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,  // Allow cookies if necessary
 };
 
+// Enable CORS for all routes
 app.use(cors(corsOptions));
 
+// Handle preflight OPTIONS requests
+app.options('*', cors(corsOptions));
 
 // Middleware
 app.use(express.json());
@@ -67,3 +71,4 @@ connectDB()
     .catch(error => {
         console.error('Failed to start server:', error);
     });
+
