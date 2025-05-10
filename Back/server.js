@@ -21,10 +21,7 @@ const app = express();
 
 // Allow requests from your frontend origin
 app.use(cors());
-    /*{
-    origin: "http://localhost:5173",
-    credentials: true // if you're using cookies/auth headers
-  }));*/
+
 
 // Middleware
 app.use(express.json());
@@ -41,7 +38,7 @@ app.get('/', (req, res) => {
 });
 
 // Connect to MongoDB and start server
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 connectDB()
     .then(() => {
