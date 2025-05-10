@@ -8,7 +8,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
-const API_URL = "https://scoot-me-pi.vercel.app";
+const API_URL = "https://scoot-me-production.up.railway.app";
 
 export default function BookRide() {
   const [query, setQuery] = useState("");

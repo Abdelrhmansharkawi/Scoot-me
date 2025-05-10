@@ -5,7 +5,7 @@ import mu from "../public/mu.svg";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const API_URL = "https://scoot-me-pi.vercel.app";
+const API_URL = "https://scoot-me-production.up.railway.app";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
