@@ -14,14 +14,12 @@ const tripSchema = new mongoose.Schema({
         required: true
     },
 
-    // Trip start time
     startTime: {
         type: Date,
         required: true,
         default: Date.now
     },
 
-    // Trip end time (null until trip ends)
     endTime: {
         type: Date,
         default: null
@@ -57,7 +55,7 @@ const tripSchema = new mongoose.Schema({
         },
         endLocationName: {
             type: String,
-            required: false // Set to false if locationName is not required
+            required: false 
         }
     },
 

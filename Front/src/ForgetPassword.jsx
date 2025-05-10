@@ -5,13 +5,15 @@ import mu from "../public/mu.svg";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const API_URL = "https://scoot-me-production.up.railway.app/";
+
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
 
   const handleSubmit = async (e) => {
   e.preventDefault();
   try {
-    const res = await fetch("http://localhost:3000/api/forgot-password", {
+    const res = await fetch(`${API_URL}/api/forgot-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

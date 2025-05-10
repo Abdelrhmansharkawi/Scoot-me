@@ -1,7 +1,10 @@
+
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import axios from "axios";
+
+const API_URL = "https://scoot-me-production.up.railway.app/";
 
 function Signup() {
   const [firstName, setFirstName] = useState("");
@@ -18,10 +21,8 @@ function Signup() {
   const handleSignup = async (e) => {
     e.preventDefault();
 
-    // Reset error
     setError("");
 
-    // Basic validation
     if (!firstName || !lastName || !email || !password) {
       setError("Please fill in all required fields.");
       return;
@@ -49,7 +50,7 @@ function Signup() {
     }
     try {
       setLoading(true);
-      const res = await axios.post("http://localhost:3000/api/auth/register", {
+      const res = await axios.post(`${API_URL}/api/auth/register`, {
         firstName,
         lastName,
         email,

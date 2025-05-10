@@ -8,6 +8,8 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
+const API_URL = "https://scoot-me-production.up.railway.app/";
+
 export default function BookRide() {
   const [query, setQuery] = useState("");
   const [scooters, setScooters] = useState([]);
@@ -19,7 +21,7 @@ export default function BookRide() {
         const token = localStorage.getItem("token");
         
 
-const res = await axios.get("http://localhost:3000/api/scooter", {
+const res = await axios.get(`${API_URL}/api/scooter`, {
   headers: {
     Authorization: `Bearer ${token}`,
   },
@@ -55,7 +57,7 @@ const res = await axios.get("http://localhost:3000/api/scooter", {
       const token = localStorage.getItem("token");
   
       await axios.patch(
-        `http://localhost:3000/api/scooter/${scooter._id}/book`,
+        `${API_URL}/api/scooter/${scooter._id}/book`,
         {},
         {
           headers: {

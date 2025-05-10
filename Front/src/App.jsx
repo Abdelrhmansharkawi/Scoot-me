@@ -31,15 +31,6 @@ function App() {
         </button>
       </Link>
 
-      {/*<Link to="/book-ride" className="absolute bottom-24 right-6">
-        <motion.div
-          animate={{ y: [0, -15, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
-          className="p-2 bg-white rounded-full shadow-lg"
-        >
-          <MdElectricScooter className="text-4xl text-orange-500 hover:scale-110 transition-transform" />
-        </motion.div>
-      </Link>*/}
 
       <Outlet />
     </div>

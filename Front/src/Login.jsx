@@ -5,6 +5,8 @@ import mu from "../public/mu.svg";
 import scan from "../public/scan.svg";
 import axios from "axios";
 
+const API_URL = "https://scoot-me-production.up.railway.app/";
+
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -32,7 +34,7 @@ function Login() {
     }
     try {
       setLoading(true);
-      const res = await axios.post("http://localhost:3000/api/auth/login", {
+      const res = await axios.post(`${API_URL}/api/auth/login`, {
         email,
         password,
       });

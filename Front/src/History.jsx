@@ -7,7 +7,7 @@ import axios from "axios";
 import { motion } from "framer-motion";
 
 
-
+const API_URL = "https://scoot-me-production.up.railway.app/";
 
 function History() {
   const [query, setQuery] = useState("");
@@ -18,7 +18,7 @@ function History() {
     const fetchHistory = async () => {
       try {
         const token = localStorage.getItem("token"); 
-        const res = await axios.get("http://localhost:3000/api/history", {
+        const res = await axios.get(`${API_URL}/api/history`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -92,11 +92,6 @@ function History() {
             <FaHome className="text-xl" />
           <span className="text-xs">Home</span>
         </button>
-        {/*<button className="bg-gray-500 p-4 rounded-full shadow-lg text-white -mt-6">
-          <Link to="/book-ride" className="text-sm text-orange-100">
-            <FiPlus className="text-2xl" />
-          </Link>
-        </button>*/}
         <Link to="/book-ride" className="flex flex-col items-center text-gray-500">
         <motion.div
           animate={{ y: [0, -15, 0] }}
