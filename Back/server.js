@@ -60,7 +60,7 @@ app.get('/', (req, res) => {
 });
 
 // Connect to MongoDB and start server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 connectDB()
     .then(() => {
