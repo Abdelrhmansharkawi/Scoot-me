@@ -4,7 +4,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-const API_URL = "https://scoot-me-production.up.railway.app/";
+const API_URL = "https://scoot-me-production.up.railway.app";
 
 function Signup() {
   const [firstName, setFirstName] = useState("");
