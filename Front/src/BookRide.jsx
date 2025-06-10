@@ -8,7 +8,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
-const API_URL = "https://scoot-me-production.up.railway.app";
+const API_URL = "";
 
 export default function BookRide() {
   const [query, setQuery] = useState("");
@@ -87,7 +87,6 @@ const res = await axios.get(`${API_URL}/api/scooter`, {
   return (
     
     <div className="flex flex-col h-screen bg-gray-50">
-      {/* Log Out Button */}
       <button
         onClick={handleLogOut}
         className="absolute top-2 right-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-full font-semibold transition"
