@@ -38,7 +38,7 @@ const scooterSchema = new mongoose.Schema({
     },
     locationName: {
       type: String,
-      required: true // Set to false if locationName is not required
+      required: true 
     }
   },
   lastMaintenance: Date,

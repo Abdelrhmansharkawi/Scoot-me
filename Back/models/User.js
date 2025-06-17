@@ -46,6 +46,24 @@ const userSchema = new mongoose.Schema({
     enum: ['ACTIVE', 'SUSPENDED', 'INACTIVE'],
     default: 'INACTIVE'
   },
+    verifiedStudentData: {
+    studentName: { type: String },
+    studentNumber: { type: String },
+    college: { type: String },
+    yearLevel: { type: String },
+    enrollmentStatus: {
+      type: String,
+    },
+    verifiedFromQR: {
+      type: Boolean,
+      default: false
+    }
+  },
+
+  
+  qrScanSource: {
+    type: String
+  },
   resetPasswordToken: String,
 resetPasswordExpires: Date
 }, {

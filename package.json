@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "canvas": "^3.1.0",
+    "cheerio": "^1.1.0",
+    "express": "^5.1.0",
+    "jsqr": "^1.4.0",
+    "multer": "^2.0.1",
+    "node-fetch": "^3.3.2"
+  }
+}
