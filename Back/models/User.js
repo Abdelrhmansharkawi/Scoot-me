@@ -59,10 +59,23 @@ const userSchema = new mongoose.Schema({
       default: false
     }
   },
-
   
   qrScanSource: {
     type: String
+  },
+  settings: {
+    pushNotifications: {
+      type: Boolean,
+      default: true
+    },
+    emailNotifications: {
+      type: Boolean,
+      default: true
+    },
+    rideReminders: {
+      type: Boolean,
+      default: false
+    }
   },
   resetPasswordToken: String,
 resetPasswordExpires: Date

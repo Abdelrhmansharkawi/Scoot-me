@@ -68,3 +68,5 @@ package-lock.json
 *.msi
 *.msm
 *.msp
+
+node_modules/

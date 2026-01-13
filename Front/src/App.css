@@ -1,5 +1,23 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 input::-ms-reveal,
 input::-ms-clear {
-  display: none;
+	display: none;
+}
+.leaflet-container.clickable-map {
+	cursor: pointer !important;
+}
+
+/* Force the video to cover the entire screen */
+#reader video {
+	width: 100% !important;
+	height: 100% !important;
+	object-fit: cover !important;
+}
+
+/* Hide the library's default status messages and borders */
+#reader img {
+	display: none !important;
+}
+#reader > div {
+	border: none !important;
 }
