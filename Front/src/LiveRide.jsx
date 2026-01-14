@@ -193,7 +193,7 @@ const LiveRide = () => {
 	useEffect(() => {
 		if (!rideStarted) return;
 
-		const refreshGPS = () => {
+		const updateLocation = (highAccuracy = false) => {
 			navigator.geolocation.getCurrentPosition(
 				(pos) => {
 					setLivePos({
@@ -203,23 +203,34 @@ const LiveRide = () => {
 				},
 				(err) => console.error('GPS Error:', err),
 				{
-					enableHighAccuracy: true,
-					maximumAge: 0,
+					enableHighAccuracy: highAccuracy,
+					maximumAge: highAccuracy ? 0 : 5000,
 					timeout: 10000,
 				}
 			);
 		};
 
+		// Initial precise fix
+		updateLocation(true);
+
+		// Continuous lightweight updates (THIS is the key)
+		const interval = setInterval(() => {
+			updateLocation(false);
+		}, 2000);
+
+		// Force precise refresh on resume
 		const handleVisibilityChange = () => {
 			if (!document.hidden) {
-				refreshGPS();
+				updateLocation(true);
 			}
 		};
 
 		document.addEventListener('visibilitychange', handleVisibilityChange);
 
-		return () =>
+		return () => {
+			clearInterval(interval);
 			document.removeEventListener('visibilitychange', handleVisibilityChange);
+		};
 	}, [rideStarted]);
 
 	/* -------- Smooth Local Timer (1s) -------- */
