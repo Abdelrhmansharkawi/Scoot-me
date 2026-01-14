@@ -245,17 +245,21 @@ const LiveRide = () => {
 				);
 
 				setStats((prev) => {
-					const drift = res.data.time - prev.duration;
-					if (Math.abs(drift) > 2) {
-						return { ...prev, duration: res.data.time };
-					}
-					return {
+					const next = {
 						...prev,
 						distance: res.data.distance,
 						cost: res.data.cost,
 						minsRemaining: res.data.minsRemaining,
 						estimatedArrival: res.data.estimatedArrival,
 					};
+
+					// Only correct time if drift is large
+					const drift = res.data.time - prev.duration;
+					if (Math.abs(drift) > 2) {
+						next.duration = res.data.time;
+					}
+
+					return next;
 				});
 
 				setTrip((prev) => ({
