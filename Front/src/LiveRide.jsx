@@ -143,7 +143,6 @@ const RoutingControl = ({ start, end }) => {
 			]);
 		}
 	}, [map, start.lat, start.lng, end.lat, end.lng]);
-	// Depend on specific lat/lng
 
 	return null;
 };
@@ -155,7 +154,13 @@ const LiveRide = () => {
 	const [destination, setDestination] = useState(null);
 	const [rideStarted, setRideStarted] = useState(false);
 	const [livePos, setLivePos] = useState(null);
+
+	// Using a ref for position ensures the interval always sends the latest coordinates
+	// without needing to reset the interval constantly
+	const livePosRef = useRef(null);
 	const pollingRef = useRef(null);
+	const wakeLockRef = useRef(null);
+
 	const [stats, setStats] = useState({
 		duration: 0,
 		distance: 0,
@@ -190,51 +195,63 @@ const LiveRide = () => {
 		fetchTrip();
 	}, [tripId]);
 
+	/* -------- CHANGED: Improved Location Tracking & Wake Lock -------- */
 	useEffect(() => {
 		if (!rideStarted) return;
 
-		const updateLocation = (highAccuracy = false) => {
-			navigator.geolocation.getCurrentPosition(
-				(pos) => {
-					setLivePos({
-						lat: pos.coords.latitude,
-						lng: pos.coords.longitude,
-					});
-				},
-				(err) => console.error('GPS Error:', err),
-				{
-					enableHighAccuracy: highAccuracy,
-					maximumAge: highAccuracy ? 0 : 5000,
-					timeout: 10000,
+		// 1. Request Screen Wake Lock (prevents phone from sleeping)
+		const requestWakeLock = async () => {
+			try {
+				if ('wakeLock' in navigator) {
+					wakeLockRef.current = await navigator.wakeLock.request('screen');
+					console.log('Wake Lock active');
 				}
-			);
+			} catch (err) {
+				console.error('Wake Lock error:', err);
+			}
 		};
+		requestWakeLock();
 
-		// Initial precise fix
-		updateLocation(true);
+		// 2. Use watchPosition instead of polling
+		// This persists better in background/locked states on mobile
+		const geoId = navigator.geolocation.watchPosition(
+			(pos) => {
+				const newPos = {
+					lat: pos.coords.latitude,
+					lng: pos.coords.longitude,
+				};
+				setLivePos(newPos);
+				livePosRef.current = newPos; // Update Ref for the API interval
+			},
+			(err) => console.error('GPS Watch Error:', err),
+			{
+				enableHighAccuracy: true,
+				maximumAge: 0,
+				timeout: 20000,
+			}
+		);
 
-		// Continuous lightweight updates (THIS is the key)
-		const interval = setInterval(() => {
-			updateLocation(false);
-		}, 2000);
-
-		// Force precise refresh on resume
+		// 3. Handle Visibility (force sync when unlocking phone)
 		const handleVisibilityChange = () => {
-			if (!document.hidden) {
-				updateLocation(true);
+			// If wake lock was released (e.g. user minimized app), try re-acquiring it
+			if (!document.hidden && !wakeLockRef.current) {
+				requestWakeLock();
 			}
 		};
 
 		document.addEventListener('visibilitychange', handleVisibilityChange);
 
 		return () => {
-			clearInterval(interval);
+			navigator.geolocation.clearWatch(geoId);
+			if (wakeLockRef.current) {
+				wakeLockRef.current.release();
+				wakeLockRef.current = null;
+			}
 			document.removeEventListener('visibilitychange', handleVisibilityChange);
 		};
 	}, [rideStarted]);
 
 	/* -------- Smooth Local Timer (1s) -------- */
-
 	useEffect(() => {
 		if (!rideStarted) return;
 
@@ -248,20 +265,24 @@ const LiveRide = () => {
 		return () => clearInterval(interval);
 	}, [rideStarted]);
 
+	/* -------- API Sync Loop -------- */
 	useEffect(() => {
 		if (!rideStarted || !tripId) return;
 
-		pollingRef.current = setInterval(async () => {
+		const syncLocation = async () => {
 			try {
+				// Use the Ref for coordinate to avoid stale closure in setInterval
+				const currentCoords =
+					livePosRef.current ||
+					livePos ||
+					trip?.currentLocation ||
+					trip?.startLocation;
+
+				if (!currentCoords) return;
+
 				const currentPos = {
-					lat:
-						livePos?.lat ??
-						trip?.currentLocation?.lat ??
-						trip?.startLocation?.lat,
-					lng:
-						livePos?.lng ??
-						trip?.currentLocation?.lng ??
-						trip?.startLocation?.lng,
+					lat: currentCoords.lat,
+					lng: currentCoords.lng,
 				};
 
 				const res = await axios.post(
@@ -279,7 +300,7 @@ const LiveRide = () => {
 						estimatedArrival: res.data.estimatedArrival,
 					};
 
-					// Only correct time if drift is large
+					// Correct time if drift is large (fixes the "locked phone" time freeze)
 					const drift = res.data.time - prev.duration;
 					if (Math.abs(drift) > 2) {
 						next.duration = res.data.time;
@@ -293,12 +314,17 @@ const LiveRide = () => {
 					currentLocation: res.data.currentLocation || currentPos,
 				}));
 			} catch (err) {
-				console.warn('Polling stopped');
+				console.warn('Polling skipped', err);
 			}
-		}, POLL_INTERVAL);
+		};
+
+		// Run sync immediately on mount/resume
+		syncLocation();
+
+		pollingRef.current = setInterval(syncLocation, POLL_INTERVAL);
 
 		return () => clearInterval(pollingRef.current);
-	}, [rideStarted, tripId, livePos, trip?.currentLocation]);
+	}, [rideStarted, tripId, trip]); // Removed 'livePos' from deps to stop interval resetting
 
 	const handleConfirmDestination = async () => {
 		if (!destination || !tripId) return;
@@ -352,20 +378,21 @@ const LiveRide = () => {
 
 	if (error)
 		return (
-			<div className="flex h-screen items-center justify-center text-red-500">
+			<div className="flex h-[100dvh] items-center justify-center text-red-500">
 				{error}
 			</div>
 		);
 
 	if (!trip)
 		return (
-			<div className="flex h-screen items-center justify-center text-gray-400">
+			<div className="flex h-[100dvh] items-center justify-center text-gray-400">
 				Loading...
 			</div>
 		);
 
 	return (
-		<div className="relative w-screen h-screen bg-slate-50 overflow-hidden font-sans">
+		// Changed h-screen to h-[100dvh] for mobile browser address bar handling
+		<div className="relative w-screen h-[100dvh] bg-slate-50 overflow-hidden font-sans">
 			{rideStarted && (
 				<div className="absolute top-12 left-1/2 -translate-x-1/2 z-[1000] w-[90%] max-w-sm">
 					<div className="bg-white rounded-3xl shadow-xl border border-slate-50 flex justify-around py-5 px-2">
