@@ -5,7 +5,7 @@ import mu from '../public/mu.svg';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'scoot-me-production.up.railway.app';
 
 export default function ForgotPassword() {
 	const [email, setEmail] = useState('');

@@ -5,7 +5,7 @@ import mu from "../public/mu.svg";
 import scan from "../public/scan.svg";
 import axios from "axios";
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'scoot-me-production.up.railway.app';
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);

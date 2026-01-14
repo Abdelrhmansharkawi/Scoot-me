@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'scoot-me-production.up.railway.app';
 
 function History() {
 	const [query, setQuery] = useState('');

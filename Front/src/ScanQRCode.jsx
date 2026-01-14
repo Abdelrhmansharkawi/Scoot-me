@@ -5,7 +5,7 @@ import { X, CameraOff, Loader2, QrCode } from 'lucide-react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'scoot-me-production.up.railway.app';
 
 const ScanQRCode = () => {
 	const navigate = useNavigate();

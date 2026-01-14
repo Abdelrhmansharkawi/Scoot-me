@@ -15,7 +15,7 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import axios from 'axios';
 
 const POLL_INTERVAL = 1000;
-const API_URL = 'http://localhost:5000';
+const API_URL = 'scoot-me-production.up.railway.app';
 
 const Icons = {
 	Cost: () => (
