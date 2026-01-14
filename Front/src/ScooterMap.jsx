@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const API_URL = 'scoot-me-production.up.railway.app';
+const API_URL = 'https://scoot-me-production.up.railway.app';
 
 // --- Custom Marker Generator ---
 const createCustomMarker = (status, batteryLevel = 85) => {

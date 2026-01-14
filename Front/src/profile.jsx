@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const API_URL = 'scoot-me-production.up.railway.app';
+const API_URL = 'https://scoot-me-production.up.railway.app';
 
 /**
  * ToggleSwitch Component
