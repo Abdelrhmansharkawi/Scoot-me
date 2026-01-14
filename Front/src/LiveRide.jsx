@@ -14,7 +14,7 @@ import 'leaflet-routing-machine';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import axios from 'axios';
 
-const POLL_INTERVAL = 1000;
+const POLL_INTERVAL = 3000;
 const API_URL = 'https://scoot-me-production.up.railway.app';
 
 const Icons = {
@@ -115,9 +115,9 @@ const RoutingControl = ({ start, end }) => {
 	const routingControlRef = useRef(null);
 
 	useEffect(() => {
-		if (!map || !start?.lat || !end?.lat) return;
+		if (!map || !start || !end) return;
 
-		// If the control doesn't exist, create it
+		// Create routing control ONCE
 		if (!routingControlRef.current) {
 			routingControlRef.current = L.Routing.control({
 				waypoints: [L.latLng(start.lat, start.lng), L.latLng(end.lat, end.lng)],
@@ -126,29 +126,24 @@ const RoutingControl = ({ start, end }) => {
 				},
 				addWaypoints: false,
 				draggableWaypoints: false,
-				fitSelectedRoutes: false, // Set to false so it doesn't "jump" while you drive
+				fitSelectedRoutes: false, // important for live tracking
 				show: false,
 				createMarker: () => null,
 				serviceUrl: 'https://router.project-osrm.org/route/v1',
 			}).addTo(map);
 
+			// Hide routing UI
 			const container = routingControlRef.current.getContainer();
 			if (container) container.style.display = 'none';
 		} else {
-			// If it DOES exist, just update the waypoints instead of re-creating the whole thing
+			// Update waypoints smoothly (NO re-creation)
 			routingControlRef.current.setWaypoints([
 				L.latLng(start.lat, start.lng),
 				L.latLng(end.lat, end.lng),
 			]);
 		}
-
-		return () => {
-			if (routingControlRef.current) {
-				map.removeControl(routingControlRef.current);
-				routingControlRef.current = null;
-			}
-		};
-	}, [map, start.lat, start.lng, end.lat, end.lng]); // Depend on specific lat/lng
+	}, [map, start.lat, start.lng, end.lat, end.lng]);
+	// Depend on specific lat/lng
 
 	return null;
 };
@@ -212,6 +207,21 @@ const LiveRide = () => {
 		return () => navigator.geolocation.clearWatch(watchId);
 	}, [rideStarted]);
 
+	/* -------- Smooth Local Timer (1s) -------- */
+
+	useEffect(() => {
+		if (!rideStarted) return;
+
+		const interval = setInterval(() => {
+			setStats((prev) => ({
+				...prev,
+				duration: prev.duration + 1,
+			}));
+		}, 1000);
+
+		return () => clearInterval(interval);
+	}, [rideStarted]);
+
 	useEffect(() => {
 		if (!rideStarted || !tripId) return;
 
@@ -234,12 +244,18 @@ const LiveRide = () => {
 					getAuthHeaders()
 				);
 
-				setStats({
-					duration: res.data.time || 0,
-					distance: res.data.distance || 0,
-					cost: res.data.cost || 0,
-					minsRemaining: res.data.minsRemaining ?? null,
-					estimatedArrival: res.data.estimatedArrival ?? null,
+				setStats((prev) => {
+					const drift = res.data.time - prev.duration;
+					if (Math.abs(drift) > 2) {
+						return { ...prev, duration: res.data.time };
+					}
+					return {
+						...prev,
+						distance: res.data.distance,
+						cost: res.data.cost,
+						minsRemaining: res.data.minsRemaining,
+						estimatedArrival: res.data.estimatedArrival,
+					};
 				});
 
 				setTrip((prev) => ({
@@ -247,16 +263,11 @@ const LiveRide = () => {
 					currentLocation: res.data.currentLocation || currentPos,
 				}));
 			} catch (err) {
-				console.warn('Polling stopped:', err.response?.data?.message);
+				console.warn('Polling stopped');
 			}
 		}, POLL_INTERVAL);
 
-		return () => {
-			if (pollingRef.current) {
-				clearInterval(pollingRef.current);
-				pollingRef.current = null;
-			}
-		};
+		return () => clearInterval(pollingRef.current);
 	}, [rideStarted, tripId, livePos, trip?.currentLocation]);
 
 	const handleConfirmDestination = async () => {
