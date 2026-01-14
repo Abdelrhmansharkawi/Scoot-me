@@ -23,7 +23,7 @@ const Review = require('./models/Review');
 
 app.use(
 	cors({
-		origin: ['http://localhost:5173', 'https://scoot-me-j98i.vercel.app/'],
+		origin: ['http://localhost:5173', 'https://scoot-me-j98i.vercel.app'],
 		credentials: true, // if you're using cookies or Authorization headers
 	})
 );
