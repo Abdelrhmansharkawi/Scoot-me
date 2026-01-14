@@ -193,18 +193,33 @@ const LiveRide = () => {
 	useEffect(() => {
 		if (!rideStarted) return;
 
-		const watchId = navigator.geolocation.watchPosition(
-			(pos) => {
-				setLivePos({
-					lat: pos.coords.latitude,
-					lng: pos.coords.longitude,
-				});
-			},
-			(err) => console.error('GPS Error:', err),
-			{ enableHighAccuracy: true }
-		);
+		const refreshGPS = () => {
+			navigator.geolocation.getCurrentPosition(
+				(pos) => {
+					setLivePos({
+						lat: pos.coords.latitude,
+						lng: pos.coords.longitude,
+					});
+				},
+				(err) => console.error('GPS Error:', err),
+				{
+					enableHighAccuracy: true,
+					maximumAge: 0,
+					timeout: 10000,
+				}
+			);
+		};
 
-		return () => navigator.geolocation.clearWatch(watchId);
+		const handleVisibilityChange = () => {
+			if (!document.hidden) {
+				refreshGPS();
+			}
+		};
+
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+
+		return () =>
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
 	}, [rideStarted]);
 
 	/* -------- Smooth Local Timer (1s) -------- */
