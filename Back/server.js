@@ -21,12 +21,16 @@ const Trip = require('./models/Trip');
 const Payment = require('./models/payment');
 const Review = require('./models/Review');
 
-app.use(
-	cors({
-		origin: ['http://localhost:5173', 'https://scoot-me-j98i.vercel.app'],
-		credentials: true, // if you're using cookies or Authorization headers
-	})
-);
+// CORS configuration with preflight handling
+const corsOptions = {
+	origin: ['http://localhost:5173', 'https://scoot-me-j98i.vercel.app'],
+	credentials: true,
+	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+	allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Handle preflight requests
 
 // Import routes
 const authRoutes = require('./routes/auth');
