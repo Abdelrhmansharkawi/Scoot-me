@@ -5,7 +5,7 @@ import mu from "../public/mu.svg";
 import scan from "../public/scan.svg";
 import axios from "axios";
 
-const API_URL = 'https://scoot-me-production.up.railway.app';
+const API_URL = import.meta.env.VITE_API_URL|| 'https://scoot-me-production.up.railway.app';
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);

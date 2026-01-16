@@ -12,7 +12,7 @@ import {
 	MapPin,
 } from 'lucide-react';
 
-const API_URL = 'https://scoot-me-production.up.railway.app';
+const API_URL = import.meta.env.VITE_API_URL|| 'https://scoot-me-production.up.railway.app';
 
 // --- SMART FORMATTING HELPERS ---
 const formatCurr = (val) => {
